@@ -1,6 +1,6 @@
 function initLightboard() {
-  width = 800;
-  height = 600;
+  width = 1280;
+  height = 720;
   video = //document.getElementById("video");
               document.createElement("video");
   video.setAttribute("height",height);
@@ -25,7 +25,7 @@ function initLightboard() {
     context.drawImage(video, 0, 0, width, height);
     img_data = context.getImageData(0, 0, width, height).data;
     sparklePointer(img_data);
-    setTimeout(videoLoop, 80);
+    setTimeout(videoLoop, 17);
   };
   getUserMedia({
     video: true,
@@ -136,6 +136,8 @@ function calibrate() {
     lbc.fillRect(0, 0, 1, 1);
     
     console.log("ready 0");
+    setTimeout(calibrate, 1000);
+    
     ++calibStage;
   } else if (calibStage == 1) {
     console.log("calibrate 1");
@@ -193,6 +195,8 @@ function calibrate() {
     
     console.log("done 1");
     
+    setTimeout(calibrate, 80);
+    
     ++calibStage;
   } else if (calibStage == 2) {
     console.log("setup 2");
@@ -213,6 +217,8 @@ function calibrate() {
     lbc.setTransform(1, 0, 0, 1, 0, 0);
     
     console.log("ready 2");
+    
+    setTimeout(calibrate, 600);
     
     ++calibStage;
   } else if (calibStage == 3) {
@@ -346,10 +352,14 @@ function calibrate() {
     
     console.log("done 3");
     
+    setTimeout(calibrate, 80);
+    
     ++calibStage;
   } else if (calibStage == 4) {
     console.log("clear 4");
     lbc.clearRect(0, 0, lightboard.width, lightboard.height);
+    
+    setTimeout(calibrate, 300);
     ++calibStage;
   } else if (calibStage == 5) {
     console.log("running 5");
@@ -364,6 +374,8 @@ function sparklePointer(img_data) {
     var ind = minX + minY*width - Math.log(Math.random())*sampling >>> 0;
     
     lbc.fillStyle = '#0000ff';
+    
+    var sxx=0,syy=0,sxy=0,sx=0,sy=0,n=0;
     
     while(ind < width*maxY) {
       var x = ind % width >>> 0;
@@ -384,84 +396,18 @@ function sparklePointer(img_data) {
       if (red > 245 && b > 360) {
         var np = matrixRight(inv, [x, y, 1]);
         divideVec(np, np[2]);
-        lbc.fillRect(np[0]*lightboard.width,np[1]*lightboard.height,5,5);
+        var nx = np[0]*lightboard.width;
+        var ny = np[1]*lightboard.height;
+        sxx += nx*nx;
+        syy += ny*ny;
+        sxy += ny*nx;
+        sx += nx;
+        sy += ny;
+        n += 1;
+        lbc.fillRect(nx-2,ny-2,5,5);
       }
       
       ind += -Math.log(Math.random())*sampling >>> 0;
     }
   }
 }
-
-/**
- * @returns point
- *     0 <= point.x < 640
- *     0 <= point.y < 480
- */
-/**
-Lightboard.prototype.findCursor = function(img_data) {
-  var num_lines = Lightboard.VIDEO_HEIGHT / Lightboard.BLOCK_HEIGHT >>> 0;
-  var num_cols = Lightboard.VIDEO_WIDTH / Lightboard.BLOCK_WIDTH >>> 0;
-  var i, j, x, y;
-  var B = [], V = [];
-  for (i = 0; i < num_lines; ++i) {
-    B.push([]), V.push([]);
-    for (j = 0; j < num_cols; ++j) {
-      V[i].push(false);
-      var brightness_sum = 0;
-      for (y = i*Lightboard.BLOCK_HEIGHT;
-           y < (i+1)*Lightboard.BLOCK_HEIGHT; ++y) {
-        for (x = j*Lightboard.BLOCK_WIDTH;
-             x < (j+1)*Lightboard.BLOCK_WIDTH; ++x) {
-          var pixel_idx = (y*Lightboard.VIDEO_WIDTH + x)*4;
-          var r = img_data[pixel_idx];
-          var g = img_data[pixel_idx+1];
-          var b = img_data[pixel_idx+2];
-          brightness_sum += (3*r+4*g+b) >>> 3;
-        }
-      }
-      B[i][j] = brightness_sum /
-          (Lightboard.BLOCK_HEIGHT*Lightboard.BLOCK_WIDTH) >>> 0;
-    }
-  }
-  var max_size = 0;
-  var point = null;
-  for (i = 0; i < num_lines; ++i) {
-    for (j = 0; j < num_cols; ++j) {
-      var block_size = 0;
-      var min_x = j, max_x = j, min_y = i, max_y = i;
-      var search_stack = [{y: i, x: j}];
-      while (search_stack.length) {
-        var pos = search_stack.pop();
-        x = pos.x;
-        y = pos.y;
-        if (x >= num_cols || y >= num_lines ||
-            x < 0 || y < 0 || V[y][x] ||
-            B[y][x] <= Lightboard.BRIGHTNESS_THRESHOLD) {
-          continue;
-        }
-        if (x > max_x) max_x = x;
-        if (x < min_x) min_x = x;
-        if (y > max_y) max_y = y;
-        if (y < min_y) min_y = y;
-        V[y][x] = true;
-        block_size++;
-        search_stack.push({y: y+1, x: x});
-        search_stack.push({y: y, x: x+1});
-        search_stack.push({y: y-1, x: x});
-        search_stack.push({y: y, x: x-1});
-      }
-      if (block_size > max_size &&
-          block_size >= Lightboard.LIGHT_SIZE) {
-        max_size = block_size;
-        point = {
-          x: max_x + min_x,
-          y: max_y + min_y
-        };
-      }
-    }
-  }
-  console.log(max_size);
-  if (point) console.log(point);
-  return point;
-};
-*/
