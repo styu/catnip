@@ -2,26 +2,20 @@ var Lightboard = function() {
   var width = Lightboard.VIDEO_WIDTH;
   var height = Lightboard.VIDEO_HEIGHT;
   var video = document.getElementById("video");
-      //document.createElement("video");
+              //document.createElement("video");
+  //document.body.insertBefore(video, document.body.firstChild);
   var canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
   var context = canvas.getContext("2d");
-  var lightboard = document.getElementById("lightboard");
-  var lightboard_context = lightboard.getContext("2d");
-      lightboard_context.beginPath();
-      lightboard_context.arc(320, 240, 5, 0, 2*Math.PI);
-      lightboard_context.fill();
+  this.lightboard = document.getElementById("lightboard");
+  this.lbc = lightboard.getContext("2d");
+
+  this.calibStage = 0;
+
   var me = this;
   var videoLoop = function() {
     context.drawImage(video, 0, 0, width, height);
-    var point = me.findCursor(
-        context.getImageData(0, 0, width, height).data);
-    // if (point) {
-    //   lightboard_context.beginPath();
-    //   lightboard_context.arc(point.x, point.y, 5, 0, 2*Math.PI);
-    //   lightboard_context.fill();
-    // }
     setTimeout(videoLoop, 80);
   };
   getUserMedia({
@@ -36,18 +30,25 @@ var Lightboard = function() {
   });
 };
 
-Lightboard.VIDEO_WIDTH = 640;
-Lightboard.VIDEO_HEIGHT = 480;
+Lightboard.VIDEO_WIDTH = 800;
+Lightboard.VIDEO_HEIGHT = 600;
 Lightboard.BLOCK_WIDTH = 2;
 Lightboard.BLOCK_HEIGHT = 2;
 Lightboard.BRIGHTNESS_THRESHOLD = 252;
 Lightboard.LIGHT_SIZE = 500;
+
+Lightboard.prototype.calibrate = function(img_data, width, height) {
+  for (i = 0; i < width*height; ++i) {
+    //
+  }
+}
 
 /**
  * @returns point
  *     0 <= point.x < 640
  *     0 <= point.y < 480
  */
+/**
 Lightboard.prototype.findCursor = function(img_data) {
   var num_lines = Lightboard.VIDEO_HEIGHT / Lightboard.BLOCK_HEIGHT >>> 0;
   var num_cols = Lightboard.VIDEO_WIDTH / Lightboard.BLOCK_WIDTH >>> 0;
@@ -114,4 +115,4 @@ Lightboard.prototype.findCursor = function(img_data) {
   if (point) console.log(point);
   return point;
 };
-
+*/

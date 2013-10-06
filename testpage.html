@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lightboard</title>
+  <style type="text/css">
+  #lightboard {
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    position: absolute;
+  }
+  </style>
+</head>
+<body style="background-color:black">
+  <canvas id="lightboard"></canvas>
+  <script type="text/javascript">
+    var lightboard, lbc; 
+    var calibStage = 0;
+
+    function calibrate () {
+      console.log("Calibrating");
+      if (calibStage == 0) {
+        lightboard = document.getElementById("lightboard");
+        lbc = lightboard.getContext("2d");
+
+        lbc.scale(lightboard.width, lightboard.height);
+        lbc.fillStyle = 'blue';
+        lbc.fillRect(0.2, 0.2, 0.6, 0.6);
+      }
+    }
+
+
+    console.log('hi');
+
+  </script>
+</body>
+</html>

@@ -9,18 +9,14 @@
   }
   </style>
 </head>
-<body>
-  <video id="video"></video>
-  <canvas id="lightboard" width="640px" height="480px"></canvas>
+<body style="background-color:black">
+  <video id="video" width="800" height="600"></video>
+  <canvas id="lightboard" width="800" height="600"></canvas>
   <script type="text/javascript" src="adapter.js"></script>
   <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
   <script type="text/javascript" src="Lightboard.js"></script>
   <script type="text/javascript">
-  var lb_firebase = new Firebase(
-      "https://lightboard.firebaseIO.com");
-  lb_firebase.child("hackmit")
-      .set({mode: "write", color: "#000"});
-  new Lightboard();
+  lb = new Lightboard();
   </script>
 </body>
 </html>
