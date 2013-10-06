@@ -5,18 +5,17 @@
   <style type="text/css">
   #lightboard {
     left: 0;
-    position: absolute;
+    width:100%;
+    height:100%;
+    top: 0;
+    overflow: hidden;
   }
   </style>
 </head>
-<body style="background-color:black">
-  <video id="video" width="800" height="600"></video>
+<body style="background-color:black" onLoad="initLightboard()" onClick="calibrate()">
+  <!-- <video id="video" width="800" height="600"></video> -->
   <canvas id="lightboard" width="800" height="600"></canvas>
   <script type="text/javascript" src="adapter.js"></script>
-  <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
   <script type="text/javascript" src="Lightboard.js"></script>
-  <script type="text/javascript">
-  lb = new Lightboard();
-  </script>
 </body>
 </html>
