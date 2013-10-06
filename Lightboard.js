@@ -355,7 +355,24 @@ function calibrate() {
         }
       }
       
+      iinv = invertMatrix3(inv);
       divideMatrix(inv, inv[2][2]);
+      divideMatrix(iinv, iinv[2][2]);
+      
+      var c00 = matrixRight(iinv,[0,0,1]);
+      var c01 = matrixRight(iinv,[0,1,1]);
+      var c11 = matrixRight(iinv,[1,1,1]);
+      var c10 = matrixRight(iinv,[1,0,1]);
+      divideVec(c00, c00[2]);
+      divideVec(c01, c01[2]);
+      divideVec(c11, c11[2]);
+      divideVec(c10, c10[2]);
+      
+      minX = Math.min(c00[0],c01[0]) >>> 0;
+      minY = Math.min(c00[1],c10[1]) >>> 0;
+      maxX = (Math.max(c11[0],c10[0]) >>> 0) + 1;
+      maxY = (Math.max(c11[1],c01[1]) >>> 0) + 1;
+      
       console.log("done 3");
       ++calibStage;
     } else {
@@ -376,6 +393,8 @@ function calibrate() {
   } else if (calibStage == 5) {
     console.log("running 5");
     ++calibStage;
+  } else {
+    lbc.clearRect(0, 0, lightboard.width, lightboard.height);
   }
 }
 
@@ -405,7 +424,7 @@ function sparklePointer(img_data) {
       var red = img_data[ind*4];
       var b = img_data[ind*4] + img_data[ind*4+1] + img_data[ind*4+2];
       
-      if (red > 245 && b > 360) {
+      if (red > 240 && red/b > 0.33) {
         var np = matrixRight(inv, [x, y, 1]);
         divideVec(np, np[2]);
         var nx = np[0]*lightboard.width;
